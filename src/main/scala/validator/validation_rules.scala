@@ -3,7 +3,7 @@ package validator
 import scala.util.matching.Regex
 import model.*
 
-class CheckAllDigits extends SingleColumnValidation:
+object CheckAllDigits extends SingleColumnValidation:
   override def logic(x: String): Boolean =
     val numberPattern: Regex = "^[0-9]+$".r
     x match
@@ -15,7 +15,7 @@ class CheckAllDigits extends SingleColumnValidation:
   override def validationName: String = "CheckIsInt"
 
 
-class CheckFloat extends SingleColumnValidation:
+object CheckFloat extends SingleColumnValidation:
   override def logic(x: String): Boolean =
     try
       val converted = x.toFloat

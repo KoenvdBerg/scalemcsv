@@ -1,5 +1,7 @@
 .idea/
 .bsp/
-project/
+project/.bloop
+project/project
+project/target
 target
 todo.org

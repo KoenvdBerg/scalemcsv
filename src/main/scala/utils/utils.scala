@@ -4,8 +4,7 @@ import model.ValidationResult
 
 
 object utils:
-  def getColumnVector(colname: String, data: List[Map[String, String]]): Vector[String] =
-    (for i <- data yield i(colname)).toVector
+
 
   def printValidationResult(valres: ValidationResult): Unit =
     for {
@@ -23,8 +22,8 @@ object utils:
     case null => "null"
     case _ => query.toString
 
-  def jsonValidationResult(valresults: List[ValidationResult]): String =
-        val json = for {
+  def ValidationResult2Map(valresults: List[ValidationResult]): List[Map[String, Any]] =
+        for {
           res <- valresults
         } yield Map(
           "used_validation" -> res.usedValidation,
@@ -33,7 +32,4 @@ object utils:
           "total_errors" -> res.totalFound,
           "found_indices" -> res.indicesFound,
           "found_values" -> res.valuesFound)
-        toJson(json)
-
-
 
