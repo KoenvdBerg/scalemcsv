@@ -1,11 +1,11 @@
 /**
  * DONE: output the result to JSON
  * DONE: make object/class/function to load in the CSV including all columns to 1 data structure. Use getColumnVector(). make it callable like dat.column to obtain the vector
- * TODO: build ignore null by building it into logic as default to true. It can be added to trait as parameter
+ * DONE: build ignore null by building it into logic as default to true. It can be added to trait as parameter
  * to make it avaiable to all instances. --> better still, make it ignore null as per default by just changing the logic
+ * TODO: make multiple traits like: MapValidationRule, MultiColumnValidationRule
  * TODO: make more validations for dates, like seen in csv-validator
  * TODO: input config file as JSON
- * TODO: make multiple traits like: MapValidationRule, MultiColumnValidationRule
  * TODO: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
  *  have the other column as input as well. Then something like: res = for i <- idx yield logic(v1(i), v2(i))
@@ -31,10 +31,17 @@ import model.*
 
   // Performing data validations:
   val validationObject = List(
-    CheckAllDigits.validate(dat("ID"), "ID"),
-    CheckFloat.validate(dat("capacity"), "capacity"),
-    CheckAllDigits.validate(dat("year"), "year"),
-    CheckAllDigits.validate(Vector("2022", "2020", "lkds"), "year")
+//    CheckAllDigits.validate(dat("ID"), "ID"),
+//    CheckFloat.validate(
+//      dat("capacity"),
+//      "capacity",
+//      rowCondition = (x: String) => x match
+//        case "" => false
+//        case _ => true),
+//    CheckAllDigits.validate(dat("year"), "year")
+//    CheckAllDigits.validate(Vector("2022", "2020", "lkds"), "year"),
+      new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
+        dat("weblink"), "weblink")
   )
 
   println(toJson(ValidationResult2Map(validationObject)))
