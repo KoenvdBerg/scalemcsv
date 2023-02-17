@@ -3,32 +3,34 @@
  * DONE: make object/class/function to load in the CSV including all columns to 1 data structure. Use getColumnVector(). make it callable like dat.column to obtain the vector
  * DONE: build ignore null by building it into logic as default to true. It can be added to trait as parameter
  * to make it avaiable to all instances. --> better still, make it ignore null as per default by just changing the logic
- * TODO: make multiple traits like: MapValidationRule, MultiColumnValidationRule
+ * DONE: make multiple traits like: MapValidationRule, MultiColumnValidationRule
  * DONE: make more validations for dates, like seen in csv-validator
- * TODO: input config file as JSON
- * TODO: add the rowcondition to the validation by adding depends parameter to validate
+ * DONE: make date A > date B validation using MulticolumnValidationRule
+ * DONE: input config file as JSON
+ *  like: val x = Map("rowCondition" -> ((x: Int) => x + 1))
+ * DONE: make trait and model for suite
+ * TODO: rewrite singlecolvaldiations to columnvalidations
+ * TODO: add all the specs in validation_suites.scala
+ * TODO: include header validations (filter for working specs in suiteSpecs)
+ * TODO: remakce csv-validator energysuite
+ * TODO: make basic web-app
+ * DONE: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
  *  have the other column as input as well. Then something like: res = for i <- idx yield logic(v1(i), v2(i))
  */
 
 import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
-import validator.*
 import utils.utils.*
 import model.*
-
-import java.time.Duration
-import scala.concurrent.Future
-import concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
-
+import suites.{EnergySuite}
 
 @main def run(): Unit =
 
   val t0 = System.currentTimeMillis()
 
   // Reading in the CSV file
-  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
+  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"
     implicit object MyFormat extends DefaultCSVFormat:
     override val delimiter = '|'
   val reader = CSVReader.open(infile)
@@ -36,49 +38,13 @@ import scala.util.{Failure, Success}
   reader.close()
 
   // Performing data validations:
-  val validationObject = List(
-    CheckAllDigits.validate(
-      dat("ID"),
-      "ID",
-      rowCondition = dat("ID").map(_ => true)),
-    CheckFloat.validate(
-      dat("capacity"),
-      "capacity",
-      rowCondition = dat("capacity").map {
-        case "" => false
-        case _ => true
-      }),
-    CheckAllDigits.validate(
-      dat("year"),
-      "year",
-      rowCondition = dat("year").map(_ => true)),
-    new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
-      dat("weblink"),
-      "weblink",
-      rowCondition = dat("source").map {
-        case "REE" => false
-        case _ => true
-      }),
-    CheckNotNull.validate(
-      dat("source_type"),
-      column = "source_type",
-      rowCondition = dat("source_type").map(_ => true)
-    ),
-    CheckNotNull.validate(
-      dat("source"),
-      column = "source",
-      rowCondition = dat("source").map(_ => true)
-    ),
-    CheckNotNull.validate(
-      dat("reporting_date"),
-      column = "reporting_date",
-      rowCondition = dat("reporting_date").map(_ => true)
-    ))
+  val result = EnergySuite.apply(data=dat)
 
-  println(toJson(ValidationResult2Map(validationObject)))
+
+  println(toJson(ValidationResult2Map(result)))
 
   val t1 = System.currentTimeMillis()
-  println("Elapsed time: " + (t1 - t0) + " ms")
+  println("Elapsed time: " + (t1 - t0) / 1000f + " s")
 
 
 

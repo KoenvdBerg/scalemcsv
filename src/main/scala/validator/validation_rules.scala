@@ -52,11 +52,12 @@ object CheckNotNull extends SingleColumnValidation:
   override def validationName: String = "WebLinkNotAvailable"
 
 
-class CheckDateFormat(format: String) extends SingleColumnValidation:
-  override def logic(x: String): Boolean =
+class CheckDateFormat(format: String) extends ColumnValidation:
+
+  override def logic(values: List[String]): Boolean =
     try
       val parser = SimpleDateFormat(format)
-      parser.parse(x)
+      parser.parse(values(0))
       true
     catch
       case pe: java.text.ParseException => false
@@ -64,3 +65,17 @@ class CheckDateFormat(format: String) extends SingleColumnValidation:
   override def message: String = s"Value should be in format $format"
 
   override def validationName: String = "CheckDateFormat"
+
+class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
+  override def logic(values: List[String]): Boolean =
+    try
+      val parser = SimpleDateFormat(format)
+      val a = parser.parse(values(0))
+      val b = parser.parse(values(1))
+      a.before(b)
+    catch
+      case pe: java.text.ParseException => false
+
+  override def message: String = s"Date A should be greater than Date B in format:$format"
+
+  override def validationName: String = "CheckDateAGreaterThanDateB2"
