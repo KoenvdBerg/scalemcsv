@@ -4,7 +4,7 @@
  * DONE: build ignore null by building it into logic as default to true. It can be added to trait as parameter
  * to make it avaiable to all instances. --> better still, make it ignore null as per default by just changing the logic
  * TODO: make multiple traits like: MapValidationRule, MultiColumnValidationRule
- * TODO: make more validations for dates, like seen in csv-validator
+ * DONE: make more validations for dates, like seen in csv-validator
  * TODO: input config file as JSON
  * TODO: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
@@ -17,12 +17,18 @@ import validator.*
 import utils.utils.*
 import model.*
 
+import java.time.Duration
+import scala.concurrent.Future
+import concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
+
+
 @main def run(): Unit =
 
   val t0 = System.currentTimeMillis()
 
   // Reading in the CSV file
-  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"
+  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
     implicit object MyFormat extends DefaultCSVFormat:
     override val delimiter = '|'
   val reader = CSVReader.open(infile)
@@ -31,18 +37,43 @@ import model.*
 
   // Performing data validations:
   val validationObject = List(
-//    CheckAllDigits.validate(dat("ID"), "ID"),
-//    CheckFloat.validate(
-//      dat("capacity"),
-//      "capacity",
-//      rowCondition = (x: String) => x match
-//        case "" => false
-//        case _ => true),
-//    CheckAllDigits.validate(dat("year"), "year")
-//    CheckAllDigits.validate(Vector("2022", "2020", "lkds"), "year"),
-      new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
-        dat("weblink"), "weblink")
-  )
+    CheckAllDigits.validate(
+      dat("ID"),
+      "ID",
+      rowCondition = dat("ID").map(_ => true)),
+    CheckFloat.validate(
+      dat("capacity"),
+      "capacity",
+      rowCondition = dat("capacity").map {
+        case "" => false
+        case _ => true
+      }),
+    CheckAllDigits.validate(
+      dat("year"),
+      "year",
+      rowCondition = dat("year").map(_ => true)),
+    new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
+      dat("weblink"),
+      "weblink",
+      rowCondition = dat("source").map {
+        case "REE" => false
+        case _ => true
+      }),
+    CheckNotNull.validate(
+      dat("source_type"),
+      column = "source_type",
+      rowCondition = dat("source_type").map(_ => true)
+    ),
+    CheckNotNull.validate(
+      dat("source"),
+      column = "source",
+      rowCondition = dat("source").map(_ => true)
+    ),
+    CheckNotNull.validate(
+      dat("reporting_date"),
+      column = "reporting_date",
+      rowCondition = dat("reporting_date").map(_ => true)
+    ))
 
   println(toJson(ValidationResult2Map(validationObject)))
 
@@ -90,5 +121,29 @@ import model.*
  *
  * ValidationResult(foundIndices, foundValues, foundIndices.length, this.message, column)
  *
+ *
+ *
+ * val fres = Future(
+ * new CheckDateFormat("yyyy-MM-dd").validate(
+ * dat("reporting_date"),
+ * column = "reporting_date",
+ * rowCondition = dat("capacity").map {
+ * case "" => false
+ * case _ => true
+ * }))
+ *
+ * val fres2 = Future(
+ * new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
+ * dat("weblink"),
+ * "weblink",
+ * rowCondition = dat("source").map {
+ * case "REE" => false
+ * case _ => true
+ * }))
+ *
+ * fres.onComplete {
+ * case Success(x) => println(toJson(ValidationResult2Map(List(x))))
+ * //    case Failure(e) => e.printStackTrace
+ * }
  */
 

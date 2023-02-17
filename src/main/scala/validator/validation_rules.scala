@@ -2,6 +2,7 @@ package validator
 
 import scala.util.matching.Regex
 import model.*
+import java.text.SimpleDateFormat
 
 object CheckAllDigits extends SingleColumnValidation:
   override def logic(x: String): Boolean =
@@ -35,13 +36,31 @@ class CheckNotPatternMatch(pattern: Regex) extends SingleColumnValidation:
       case this.patterToMatch() => false
       case _ => true
 
-  override def message: String = "The weblink cannot be unavailable if the source is BFE"
+  override def message: String = s"The pattern: \"${patterToMatch}\" was not matched."
 
   override def validationName: String = "WebLinkNotAvailable"
 
-//  override def logic(values: List[String]): Boolean =
-//    values(1) match
-//      case "BFE" => values(0) match
-//        case "link unavailable" => false
-//        case _ => true
-//      case _ => true
+object CheckNotNull extends SingleColumnValidation:
+  override def logic(x: String): Boolean =
+    x.toLowerCase() match
+      case "" => false
+      case "null" => false
+      case "na" => false
+      case "nan" => false
+      case _ => true
+  override def message: String = "Value should not be null"
+  override def validationName: String = "WebLinkNotAvailable"
+
+
+class CheckDateFormat(format: String) extends SingleColumnValidation:
+  override def logic(x: String): Boolean =
+    try
+      val parser = SimpleDateFormat(format)
+      parser.parse(x)
+      true
+    catch
+      case pe: java.text.ParseException => false
+
+  override def message: String = s"Value should be in format $format"
+
+  override def validationName: String = "CheckDateFormat"
