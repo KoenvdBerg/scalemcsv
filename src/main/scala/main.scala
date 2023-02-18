@@ -25,12 +25,12 @@ import utils.utils.*
 import utils.logger
 import model.*
 import suites.*
+import java.io.*
 
 
 @main def run(): Unit =
 
-  logger.info("starting program")
-  val t0 = System.currentTimeMillis()
+  logger.info("starting scalemcsv")
 
   // Reading in the CSV file
   val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
@@ -47,12 +47,11 @@ import suites.*
   val result = EnergySuite.apply(dat)
   logger.info("finished data validation")
 
-  println(toJson(ValidationResult2Map(result)))
-
-  val t1 = System.currentTimeMillis()
-  println("Elapsed time: " + (t1 - t0) / 1000f + " s")
-
-
+  // Writing result to outfile
+//  val pw = new PrintWriter(new File("/tmp/scalemcsv_output.json"))
+  val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
+  pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
+  pw.close()
 
 
 

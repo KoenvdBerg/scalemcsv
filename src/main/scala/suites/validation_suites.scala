@@ -63,15 +63,6 @@ object EnergySuite extends SuiteModel:
         },
         validation = CheckNotNull
       ),
-//      SuiteSpec(
-//        column = "reporting_date",
-//        depends = Vector("reporting_date"),
-//        rowCondition = (x: Vector[String]) => x.head match {
-//          case "" => false
-//          case _ => true
-//        },
-//        validation = new CheckDateFormat("yyyy-MM-dd")
-//      ),
       SuiteSpec(
         column = "capacity_definition",
         depends = Vector("capacity_definition"),

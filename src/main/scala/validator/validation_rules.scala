@@ -31,7 +31,7 @@ object CheckFloat extends ColumnValidation:
 class CheckPatternMatch(pattern: Regex, inverse: Boolean = false) extends ColumnValidation:
   override def logic(x: Vector[String]): Boolean =
     if inverse then !pattern.matches(x.head) else pattern.matches(x.head)
-  override def message: String = s"The pattern: \"${pattern}\" was not matched."
+  override def message: String = s"The pattern: [${pattern}] was not matched."
   override def validationName: String = "CheckPatternMatch"
 
 object CheckNotNull extends ColumnValidation:

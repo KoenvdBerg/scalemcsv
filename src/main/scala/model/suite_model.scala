@@ -20,13 +20,16 @@ trait SuiteModel:
   def suiteName: String
   def suiteSpecs: List[SuiteSpec]
   def apply(data: Map[String, Vector[String]]): List[ValidationResult] =
+      val nValidations = this.suiteSpecs.length
       this.suiteSpecs.zipWithIndex.map((spec, index) =>
         val relevantData = spec.depends.map(data(_))
-        logger.info(s"processing valdidation ${index+1} / ${this.suiteSpecs.length} named: ${spec.validation.validationName}")
-        spec.validation.validate(
+        val appliedValidation = spec.validation.validate(
           columnValues = relevantData,
           column = spec.column,
-          rowCondition = relevantData.transpose.map(spec.rowCondition).toVector))
+          rowCondition = relevantData.transpose.map(spec.rowCondition).toVector)
+        logger.info(s"finished ${index+1} / ${nValidations}:  [${appliedValidation.totalFound} hits] for ${spec.validation.validationName} on ${appliedValidation.column}")
+        appliedValidation
+      )
 
 
 
