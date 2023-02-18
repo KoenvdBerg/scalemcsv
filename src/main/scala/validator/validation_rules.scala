@@ -73,3 +73,11 @@ class CheckDateFormat(format: String) extends ColumnValidation:
   override def message: String = s"Value should be in format $format"
 
   override def validationName: String = "CheckDateFormat"
+
+class CheckNCharacters(maxNChars: Int) extends ColumnValidation:
+  override def logic(values: Vector[String]): Boolean =
+    values.head.length <= maxNChars
+
+  override def message: String = s"Value should not exceed the character amount of $maxNChars"
+
+  override def validationName: String = "CheckNCharacters"

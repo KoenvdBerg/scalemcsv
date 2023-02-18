@@ -11,10 +11,12 @@ object EnergySuite extends SuiteModel:
       SuiteSpec(
         column = "ID",
         depends = Vector("ID"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
         validation = CheckAllDigits
+      ),
+      SuiteSpec(
+        column = "technology",
+        depends = Vector("technology"),
+        validation = new CheckNCharacters(50)
       ),
       SuiteSpec(
         column = "capacity",
@@ -24,11 +26,7 @@ object EnergySuite extends SuiteModel:
       ),
       SuiteSpec(
         column = "year",
-        depends = Vector("year"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
-        validation = CheckAllDigits
+        depends = Vector("year"), ts
       ),
       SuiteSpec(
         column = "weblink",
@@ -42,42 +40,26 @@ object EnergySuite extends SuiteModel:
       SuiteSpec(
         column = "source_type",
         depends = Vector("source_type"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
         validation = CheckNotNull
       ),
       SuiteSpec(
         column = "source",
         depends = Vector("source"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
         validation = CheckNotNull
       ),
       SuiteSpec(
         column = "reporting_date",
         depends = Vector("reporting_date"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
         validation = CheckNotNull
       ),
       SuiteSpec(
         column = "capacity_definition",
         depends = Vector("capacity_definition"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case _ => true
-        },
         validation = new CheckPatternMatch(pattern = "(Gross\\scapacity|Net\\scapacity|Unknown)".r)
       ),
       SuiteSpec(
         column = "reporting_date",
         depends = Vector("reporting_date"),
-        rowCondition = (x: Vector[String]) => x.head match {
-          case "" => false
-          case _ => true
-        },
         validation = new CheckPatternMatch(pattern = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$".r)
       )
     )

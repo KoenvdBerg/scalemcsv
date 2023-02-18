@@ -12,7 +12,9 @@ import ExecutionContext.Implicits.global
 case class SuiteSpec(
   column: String,
   depends: Vector[String],
-  rowCondition: Vector[String] => Boolean,
+  rowCondition: Vector[String] => Boolean = (x: Vector[String]) => x.head match {
+    case _ => true
+  },
   validation: ColumnValidation
 )
 
