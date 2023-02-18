@@ -23,14 +23,16 @@ import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
 import utils.utils.*
 import model.*
-import suites.{EnergySuite}
+//import suites.{EnergySuite}
+import suites.*
+
 
 @main def run(): Unit =
 
   val t0 = System.currentTimeMillis()
 
   // Reading in the CSV file
-  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"
+  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
     implicit object MyFormat extends DefaultCSVFormat:
     override val delimiter = '|'
   val reader = CSVReader.open(infile)
@@ -38,7 +40,8 @@ import suites.{EnergySuite}
   reader.close()
 
   // Performing data validations:
-  val result = EnergySuite.apply(data=dat)
+//  val result = applySuite(dat)
+  val result = EnergySuite.apply(dat)
 
 
   println(toJson(ValidationResult2Map(result)))

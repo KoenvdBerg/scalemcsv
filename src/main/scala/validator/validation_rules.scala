@@ -4,10 +4,10 @@ import scala.util.matching.Regex
 import model.*
 import java.text.SimpleDateFormat
 
-object CheckAllDigits extends SingleColumnValidation:
-  override def logic(x: String): Boolean =
+object CheckAllDigits extends ColumnValidation:
+  override def logic(x: Vector[String]): Boolean =
     val numberPattern: Regex = "^[0-9]+$".r
-    x match
+    x.head match
       case numberPattern() => true
       case _ => false
 
@@ -52,22 +52,8 @@ object CheckNotNull extends SingleColumnValidation:
   override def validationName: String = "WebLinkNotAvailable"
 
 
-class CheckDateFormat(format: String) extends ColumnValidation:
-
-  override def logic(values: List[String]): Boolean =
-    try
-      val parser = SimpleDateFormat(format)
-      parser.parse(values(0))
-      true
-    catch
-      case pe: java.text.ParseException => false
-
-  override def message: String = s"Value should be in format $format"
-
-  override def validationName: String = "CheckDateFormat"
-
 class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
-  override def logic(values: List[String]): Boolean =
+  override def logic(values: Vector[String]): Boolean =
     try
       val parser = SimpleDateFormat(format)
       val a = parser.parse(values(0))
@@ -79,3 +65,17 @@ class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
   override def message: String = s"Date A should be greater than Date B in format:$format"
 
   override def validationName: String = "CheckDateAGreaterThanDateB2"
+
+class CheckDateFormat(format: String) extends ColumnValidation:
+
+  override def logic(values: Vector[String]): Boolean =
+    try
+      val parser = SimpleDateFormat(format)
+      parser.parse(values.head)
+      true
+    catch
+      case pe: java.text.ParseException => false
+
+  override def message: String = s"Value should be in format $format"
+
+  override def validationName: String = "CheckDateFormat"

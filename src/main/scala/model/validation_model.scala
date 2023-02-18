@@ -47,10 +47,10 @@ trait SingleColumnValidation:
 
 
 trait ColumnValidation:
-  def logic(values: List[String]): Boolean
+  def logic(values: Vector[String]): Boolean
   def message: String
   def validationName: String
-  def validate(values: List[Vector[String]], column: String, rowCondition: Vector[Boolean]): ValidationResult =
+  def validate(values: Vector[Vector[String]], column: String, rowCondition: Vector[Boolean]): ValidationResult =
     val appliedLogic = values.transpose.map(v => this.logic(v))
     val res = for {
       i <- values.head.indices

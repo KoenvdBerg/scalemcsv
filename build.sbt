@@ -8,3 +8,4 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.10"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4"
