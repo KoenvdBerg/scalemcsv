@@ -16,10 +16,10 @@ object CheckAllDigits extends ColumnValidation:
   override def validationName: String = "CheckIsInt"
 
 
-object CheckFloat extends SingleColumnValidation:
-  override def logic(x: String): Boolean =
+object CheckFloat extends ColumnValidation:
+  override def logic(x: Vector[String]): Boolean =
     try
-      val converted = x.toFloat
+      val converted = x.head.toFloat
       true
     catch
       case nfm: NumberFormatException => false
@@ -28,28 +28,22 @@ object CheckFloat extends SingleColumnValidation:
 
   override def validationName: String = "CheckFloat"
 
-class CheckNotPatternMatch(pattern: Regex) extends SingleColumnValidation:
+class CheckPatternMatch(pattern: Regex, inverse: Boolean = false) extends ColumnValidation:
+  override def logic(x: Vector[String]): Boolean =
+    if inverse then !pattern.matches(x.head) else pattern.matches(x.head)
+  override def message: String = s"The pattern: \"${pattern}\" was not matched."
+  override def validationName: String = "CheckPatternMatch"
 
-  private val patterToMatch: Regex = pattern
-  override def logic(x: String): Boolean =
-    x match
-      case this.patterToMatch() => false
-      case _ => true
-
-  override def message: String = s"The pattern: \"${patterToMatch}\" was not matched."
-
-  override def validationName: String = "WebLinkNotAvailable"
-
-object CheckNotNull extends SingleColumnValidation:
-  override def logic(x: String): Boolean =
-    x.toLowerCase() match
+object CheckNotNull extends ColumnValidation:
+  override def logic(x: Vector[String]): Boolean =
+    x.head.toLowerCase() match
       case "" => false
       case "null" => false
       case "na" => false
       case "nan" => false
       case _ => true
   override def message: String = "Value should not be null"
-  override def validationName: String = "WebLinkNotAvailable"
+  override def validationName: String = "CheckNotNull"
 
 
 class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
@@ -64,7 +58,7 @@ class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
 
   override def message: String = s"Date A should be greater than Date B in format:$format"
 
-  override def validationName: String = "CheckDateAGreaterThanDateB2"
+  override def validationName: String = "CheckDateAGreaterThanDate"
 
 class CheckDateFormat(format: String) extends ColumnValidation:
 

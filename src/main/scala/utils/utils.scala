@@ -1,7 +1,9 @@
 package utils
 
 import model.ValidationResult
+import com.typesafe.scalalogging.*
 
+val logger = Logger("scalemcsv")
 
 object utils:
 

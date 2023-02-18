@@ -2,7 +2,12 @@ package model
 
 import model.ValidationResult
 import validator.*
+import utils.logger
 import scala.collection.parallel.CollectionConverters._
+
+import scala.concurrent.{ Future, ExecutionContext }
+import ExecutionContext.Implicits.global
+
 
 case class SuiteSpec(
   column: String,
@@ -15,20 +20,36 @@ trait SuiteModel:
   def suiteName: String
   def suiteSpecs: List[SuiteSpec]
   def apply(data: Map[String, Vector[String]]): List[ValidationResult] =
-//    this.suiteSpecs.map(spec => spec.validation.validate(
-//      values = spec.depends.map(data(_)),
-//      column = spec.column,
-//      rowCondition = spec.depends.map(data(_)).transpose.map(spec.rowCondition).toVector
-//    ))
+      this.suiteSpecs.zipWithIndex.map((spec, index) =>
+        val relevantData = spec.depends.map(data(_))
+        logger.info(s"processing valdidation ${index+1} / ${this.suiteSpecs.length} named: ${spec.validation.validationName}")
+        spec.validation.validate(
+          columnValues = relevantData,
+          column = spec.column,
+          rowCondition = relevantData.transpose.map(spec.rowCondition).toVector))
 
 
-    for {
-      i <- this.suiteSpecs
-    } yield
-      val relevantData = i.depends.map(data(_))
-      i.validation.validate(
-        values = relevantData,
-        column = i.column,
-        rowCondition = relevantData.transpose.map(i.rowCondition)
-    )
+
+
+
+// YARD:
+// WITH FUTURE:
+//def apply(data: Map[String, Vector[String]]): List[Future[ValidationResult]] =
+//  this.suiteSpecs.map(spec =>
+//    Future {
+//      val relevantData = spec.depends.map(data(_))
+//      spec.validation.validate(
+//        values = relevantData,
+//        column = spec.column,
+//        rowCondition = relevantData.transpose.map(spec.rowCondition).toVector)
+//    })
+//    for {
+//      i <- this.suiteSpecs
+//    } yield
+//      val relevantData = i.depends.map(data(_))
+//      i.validation.validate(
+//        values = relevantData,
+//        column = i.column,
+//        rowCondition = relevantData.transpose.map(i.rowCondition)
+//    )
 

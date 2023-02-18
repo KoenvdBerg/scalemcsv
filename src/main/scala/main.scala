@@ -9,8 +9,8 @@
  * DONE: input config file as JSON
  *  like: val x = Map("rowCondition" -> ((x: Int) => x + 1))
  * DONE: make trait and model for suite
- * TODO: rewrite singlecolvaldiations to columnvalidations
- * TODO: add all the specs in validation_suites.scala
+ * DONE: rewrite singlecolvaldiations to columnvalidations
+ * DONE: add all the specs in validation_suites.scala
  * TODO: include header validations (filter for working specs in suiteSpecs)
  * TODO: remakce csv-validator energysuite
  * TODO: make basic web-app
@@ -22,27 +22,30 @@
 import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
 import utils.utils.*
+import utils.logger
 import model.*
-//import suites.{EnergySuite}
 import suites.*
 
 
 @main def run(): Unit =
 
+  logger.info("starting program")
   val t0 = System.currentTimeMillis()
 
   // Reading in the CSV file
   val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
+  logger.info(s"reading input csv file: $infile")
     implicit object MyFormat extends DefaultCSVFormat:
-    override val delimiter = '|'
+      override val delimiter = '|'
   val reader = CSVReader.open(infile)
   val dat = DataModel.dataMap(reader.allWithHeaders())
   reader.close()
+  logger.info("done reading csv file")
 
   // Performing data validations:
-//  val result = applySuite(dat)
+  logger.info("starting data validation")
   val result = EnergySuite.apply(dat)
-
+  logger.info("finished data validation")
 
   println(toJson(ValidationResult2Map(result)))
 
@@ -54,7 +57,30 @@ import suites.*
 
 
 
-
+// YARD
+//def readData(infile: String): Map[String, Vector[String]] =
+//  implicit object MyFormat extends DefaultCSVFormat:
+//    override val delimiter = '|'
+//  val reader = CSVReader.open(infile)
+//  val dat = DataModel.dataMap(reader.allWithHeaders())
+//  reader.close()
+//  dat
+//import zio.*
+//import zio.Console.*
+//object MyApp extends ZIOAppDefault:
+//  def run =
+//    for {
+////      t0 <- System.currentTimeMillis()
+//      result <- EnergySuite.apply(readData("/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"))
+//      //  println(toJson(ValidationResult2Map(result)))
+////      t1 <- System.currentTimeMillis()
+////       _ <- println ("Elapsed time: " + (t1 - t0) / 1000f + " s")
+//    } yield ZIO[Any, Nothing, List[ValidationResult]]()
+//
+//  val runtime = Runtime.default
+//  Unsafe.unsafe { implicit unsafe =>
+//    runtime.unsafe.run(ZIO.attempt(EnergySuite.apply(dat))).getOrThrowFiberFailure()
+//}
 
 /**
  * YARD:
