@@ -1,4 +1,4 @@
-package model
+package scalemcsv.model
 
 /**
  * Defines the result of a validation

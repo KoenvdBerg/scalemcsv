@@ -1,9 +1,9 @@
-package validator
+package scalemcsv.validator
 
 import jdk.jshell.spi.ExecutionControl.NotImplementedException
 
 import scala.util.matching.Regex
-import model.*
+import scalemcsv.model.*
 
 import java.text.SimpleDateFormat
 import java.util.Date

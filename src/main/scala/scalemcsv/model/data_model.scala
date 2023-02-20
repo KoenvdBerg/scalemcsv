@@ -1,4 +1,4 @@
-package model
+package scalemcsv.model
 
 object DataModel:
 

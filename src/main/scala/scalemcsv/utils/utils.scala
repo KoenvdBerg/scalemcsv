@@ -1,6 +1,6 @@
-package utils
+package scalemcsv.utils
 
-import model.ValidationResult
+import scalemcsv.model.ValidationResult
 import com.typesafe.scalalogging.*
 
 /** Logger used in scalemcsv */
@@ -24,7 +24,7 @@ object utils:
   /**
    * Transforms the list of validation results to a Map() collection
    * @param valresults List of ValidationResults
-   * @return Map as defined in this function. 
+   * @return Map as defined in this function.
    */
   def ValidationResult2Map(valresults: List[ValidationResult]): List[Map[String, Any]] =
         for {

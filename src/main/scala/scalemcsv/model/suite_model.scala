@@ -1,12 +1,11 @@
-package model
-
-import model.ValidationResult
-import validator.*
-import utils.logger
-import scala.collection.parallel.CollectionConverters._
+package scalemcsv.model
 
 import scala.concurrent.{ Future, ExecutionContext }
 import ExecutionContext.Implicits.global
+
+import scalemcsv.model.ValidationResult
+import scalemcsv.validator.*
+import scalemcsv.utils.logger
 
 /**
  * Defines a specification of a validation in a validation suite

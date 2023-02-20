@@ -13,9 +13,10 @@
  * DONE: add all the specs in validation_suites.scala
  * DONE: include header validations (filter for working specs in suiteSpecs)
  * DONE: remakce csv-validator energysuite
- * TODO: write in-code documentation and remove Yards
+ * DONE: write in-code documentation and remove Yards
  * TODO: figure out how to make a SCALA library
  * TODO: write README
+ * TODO: write unit tests
  * DONE: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
  *  have the other column as input as well. Then something like: res = for i <- idx yield logic(v1(i), v2(i))
@@ -23,20 +24,19 @@
 
 import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
-import java.
-import utils.utils.*
-import utils.logger
-import model.*
-import suites.*
 import java.io.*
 
+import scalemcsv.utils.utils.*
+import scalemcsv.utils.logger
+import scalemcsv.model.*
+import scalemcsv.suites.*
 
 @main def run(): Unit =
 
   logger.info("starting scalemcsv")
 
   // Reading in the CSV file
-  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
+  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"
   logger.info(s"reading input csv file: $infile")
     implicit object MyFormat extends DefaultCSVFormat:
       override val delimiter = '|'

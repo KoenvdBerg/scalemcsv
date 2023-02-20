@@ -1,7 +1,7 @@
-package suites
+package scalemcsv.suites
 
-import validator.*
-import model.*
+import scalemcsv.validator.*
+import scalemcsv.model.*
 
 
 object EnergySuite extends SuiteModel:
