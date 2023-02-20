@@ -8,6 +8,9 @@ import model.*
 import java.text.SimpleDateFormat
 import java.util.Date
 
+/**
+ * Checks if an incoming string consist of just numeric values
+ */
 object CheckAllDigits extends ColumnValidation:
   override def logic(x: Vector[String]): Boolean =
     val numberPattern: Regex = "^[0-9]+$".r
@@ -19,7 +22,9 @@ object CheckAllDigits extends ColumnValidation:
 
   override def validationName: String = "CheckIsInt"
 
-
+/**
+ * Checks if an incoming string is a float
+ */
 object CheckFloat extends ColumnValidation:
   override def logic(x: Vector[String]): Boolean =
     try
@@ -32,6 +37,11 @@ object CheckFloat extends ColumnValidation:
 
   override def validationName: String = "CheckFloat"
 
+/**
+ * Checks if the incoming string matches some regex pattern
+ * @param pattern The regular expression pattern
+ * @param inverse Inverses result if true i.e. do not match pattern
+ */
 class CheckPatternMatch(pattern: Regex, inverse: Boolean = false) extends ColumnValidation:
   override def logic(x: Vector[String]): Boolean =
     if inverse then !pattern.matches(x.head) else pattern.matches(x.head)
@@ -40,6 +50,9 @@ class CheckPatternMatch(pattern: Regex, inverse: Boolean = false) extends Column
     else s"The pattern: [${pattern}] not was matched and should be matched."
   override def validationName: String = "CheckPatternMatch"
 
+/**
+ * Checks if incoming string is null, na, nan or empty
+ */
 object CheckNotNull extends ColumnValidation:
   override def logic(x: Vector[String]): Boolean =
     x.head.toLowerCase() match
@@ -51,6 +64,10 @@ object CheckNotNull extends ColumnValidation:
   override def message: String = "Value should not be null"
   override def validationName: String = "CheckNotNull"
 
+/**
+ * Checks if incoming string is a date that is not in the future
+ * @param format The date format according to https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+ */
 class CheckDateNotInFuture(format: String) extends ColumnValidation:
   override def logic(values: Vector[String]): Boolean =
     try
@@ -64,6 +81,10 @@ class CheckDateNotInFuture(format: String) extends ColumnValidation:
 
   override def validationName: String = "CheckDateNotInFuture"
 
+/**
+ * Checks for 2 incoming strings if date A is before date B
+ * @param format The date format according to https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+ */
 class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
   override def logic(values: Vector[String]): Boolean =
     try
@@ -78,6 +99,10 @@ class CheckDateAGreaterThanDateB(format: String) extends ColumnValidation:
 
   override def validationName: String = "CheckDateAGreaterThanDate"
 
+/**
+ * Checks if incoming string is a date in the given format
+ * @param format The date format according to https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+ */
 class CheckDateFormat(format: String) extends ColumnValidation:
 
   override def logic(values: Vector[String]): Boolean =
@@ -92,6 +117,10 @@ class CheckDateFormat(format: String) extends ColumnValidation:
 
   override def validationName: String = "CheckDateFormat"
 
+/**
+ * Checks if the incoming string is no longer than maxNChars characters (<=)
+ * @param maxNChars Maximum allowed number of characters
+ */
 class CheckNCharacters(maxNChars: Int) extends ColumnValidation:
   override def logic(values: Vector[String]): Boolean =
     values.head.length <= maxNChars
@@ -100,6 +129,11 @@ class CheckNCharacters(maxNChars: Int) extends ColumnValidation:
 
   override def validationName: String = "CheckNCharacters"
 
+/**
+ * Checks if the incoming string is a float within a range
+ * @param rangeStart Lower bound of the range
+ * @param rangeEnd Upper bound of the range
+ */
 class CheckInRange(rangeStart: Option[Float], rangeEnd: Option[Float]) extends ColumnValidation:
   override def logic(values: Vector[String]): Boolean =
     try
@@ -112,7 +146,6 @@ class CheckInRange(rangeStart: Option[Float], rangeEnd: Option[Float]) extends C
     catch
       // in case cannot be converted to float, value is not in range and thus wrong.
       case nfm: NumberFormatException => false
-
 
   override def message: String = (rangeStart, rangeEnd) match
     case (None, Some(rangeEnd)) => s"value should be <= $rangeEnd"

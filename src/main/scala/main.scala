@@ -13,7 +13,8 @@
  * DONE: add all the specs in validation_suites.scala
  * DONE: include header validations (filter for working specs in suiteSpecs)
  * DONE: remakce csv-validator energysuite
- * TODO: write in-code documentation
+ * TODO: write in-code documentation and remove Yards
+ * TODO: figure out how to make a SCALA library
  * TODO: write README
  * DONE: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
@@ -22,6 +23,7 @@
 
 import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
+import java.
 import utils.utils.*
 import utils.logger
 import model.*
@@ -53,92 +55,4 @@ import java.io.*
   val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
   pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
   pw.close()
-
-
-
-
-// YARD
-//def readData(infile: String): Map[String, Vector[String]] =
-//  implicit object MyFormat extends DefaultCSVFormat:
-//    override val delimiter = '|'
-//  val reader = CSVReader.open(infile)
-//  val dat = DataModel.dataMap(reader.allWithHeaders())
-//  reader.close()
-//  dat
-//import zio.*
-//import zio.Console.*
-//object MyApp extends ZIOAppDefault:
-//  def run =
-//    for {
-////      t0 <- System.currentTimeMillis()
-//      result <- EnergySuite.apply(readData("/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"))
-//      //  println(toJson(ValidationResult2Map(result)))
-////      t1 <- System.currentTimeMillis()
-////       _ <- println ("Elapsed time: " + (t1 - t0) / 1000f + " s")
-//    } yield ZIO[Any, Nothing, List[ValidationResult]]()
-//
-//  val runtime = Runtime.default
-//  Unsafe.unsafe { implicit unsafe =>
-//    runtime.unsafe.run(ZIO.attempt(EnergySuite.apply(dat))).getOrThrowFiberFailure()
-//}
-
-/**
- * YARD:
- * trait EnergyData:
- * def ID: Vector[String]
- * def technology: Vector[String]
- *
- * class EnergyVal(file: String, delim: Char) extends EnergyData:
- *
- * implicit object MyFormat extends DefaultCSVFormat:
- * override val delimiter = delim
- *
- *
- * val reader = CSVReader.open(file)
- * val allData = reader.allWithHeaders()
- *
- * override def ID: Vector[String] =
- * (for i <- allData yield i("ID")).toVector
- *
- * override def technology: Vector[String] =
- * (for i <- allData yield i("technology")).toVector
- *
- * override def validate(values: Vector[String], column: String): ValidationResult =
- * val res = values.map(v => this.logic(v))
- * val foundIndices = for {
- * i <- res.indices
- * if !res(i) } yield i
- *
- * val foundValues = for {
- * i <- res.indices
- * if !res(i)
- * } yield values(i)
- *
- * ValidationResult(foundIndices, foundValues, foundIndices.length, this.message, column)
- *
- *
- *
- * val fres = Future(
- * new CheckDateFormat("yyyy-MM-dd").validate(
- * dat("reporting_date"),
- * column = "reporting_date",
- * rowCondition = dat("capacity").map {
- * case "" => false
- * case _ => true
- * }))
- *
- * val fres2 = Future(
- * new CheckNotPatternMatch(pattern = "link\\sunavailable".r).validate(
- * dat("weblink"),
- * "weblink",
- * rowCondition = dat("source").map {
- * case "REE" => false
- * case _ => true
- * }))
- *
- * fres.onComplete {
- * case Success(x) => println(toJson(ValidationResult2Map(List(x))))
- * //    case Failure(e) => e.printStackTrace
- * }
- */
 
