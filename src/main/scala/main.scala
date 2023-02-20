@@ -11,9 +11,10 @@
  * DONE: make trait and model for suite
  * DONE: rewrite singlecolvaldiations to columnvalidations
  * DONE: add all the specs in validation_suites.scala
- * TODO: include header validations (filter for working specs in suiteSpecs)
- * TODO: remakce csv-validator energysuite
- * TODO: make basic web-app
+ * DONE: include header validations (filter for working specs in suiteSpecs)
+ * DONE: remakce csv-validator energysuite
+ * TODO: write in-code documentation
+ * TODO: write README
  * DONE: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
  *  have the other column as input as well. Then something like: res = for i <- idx yield logic(v1(i), v2(i))

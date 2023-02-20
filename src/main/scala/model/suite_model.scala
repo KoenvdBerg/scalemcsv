@@ -22,16 +22,15 @@ trait SuiteModel:
   def suiteName: String
   def suiteSpecs: List[SuiteSpec]
   def apply(data: Map[String, Vector[String]]): List[ValidationResult] =
-      val nValidations = this.suiteSpecs.length
-      this.suiteSpecs.zipWithIndex.map((spec, index) =>
-        val relevantData = spec.depends.map(data(_))
-        val appliedValidation = spec.validation.validate(
-          columnValues = relevantData,
-          column = spec.column,
-          rowCondition = relevantData.transpose.map(spec.rowCondition).toVector)
-        logger.info(s"finished ${index+1} / ${nValidations}:  [${appliedValidation.totalFound} hits] for ${spec.validation.validationName} on ${appliedValidation.column}")
-        appliedValidation
-      )
+    val nValidations = this.suiteSpecs.length
+    this.suiteSpecs.zipWithIndex.map((spec, index) =>
+      val appliedValidation = spec.validation.validate(
+        data = data,
+        spec = spec)
+      logger.info(s"finished ${index + 1} / ${nValidations}:  [${appliedValidation.totalFound} hits] for ${spec.validation.validationName} on ${appliedValidation.column}")
+      appliedValidation
+    )
+
 
 
 
