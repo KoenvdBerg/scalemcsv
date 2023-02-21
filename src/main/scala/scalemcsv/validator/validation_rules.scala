@@ -20,7 +20,7 @@ object CheckAllDigits extends ColumnValidation:
 
   override def message: String = "The value should be an Integer"
 
-  override def validationName: String = "CheckIsInt"
+  override def validationName: String = "CheckAllDigits"
 
 /**
  * Checks if an incoming string is a float

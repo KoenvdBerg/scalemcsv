@@ -1,29 +1,3 @@
-/**
- * DONE: output the result to JSON
- * DONE: make object/class/function to load in the CSV including all columns to 1 data structure. Use getColumnVector(). make it callable like dat.column to obtain the vector
- * DONE: build ignore null by building it into logic as default to true. It can be added to trait as parameter
- * to make it avaiable to all instances. --> better still, make it ignore null as per default by just changing the logic
- * DONE: make multiple traits like: MapValidationRule, MultiColumnValidationRule
- * DONE: make more validations for dates, like seen in csv-validator
- * DONE: make date A > date B validation using MulticolumnValidationRule
- * DONE: input config file as JSON
- *  like: val x = Map("rowCondition" -> ((x: Int) => x + 1))
- * DONE: make trait and model for suite
- * DONE: rewrite singlecolvaldiations to columnvalidations
- * DONE: add all the specs in validation_suites.scala
- * DONE: include header validations (filter for working specs in suiteSpecs)
- * DONE: remakce csv-validator energysuite
- * DONE: write in-code documentation and remove Yards
- * DONE: implement Future with 5 threats, then if 1 finish open new thread like docker pull
- * TODO: write README
- * TODO: add to open repo on Github
- * TODO: figure out how to make a SCALA library
- * TODO: write unit tests
- * DONE: add the rowcondition to the validation by adding depends parameter to validate
- *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
- *  have the other column as input as well. Then something like: res = for i <- idx yield logic(v1(i), v2(i))
- */
-
 import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
 import java.io.*

@@ -26,7 +26,9 @@ written entirely in Scala syntax.
 Installation
 -----------
 
-To install and use scalemcsv, please do the following steps:
+The scalemcsv library is in the process of being added to Maven. In
+the meantime, to install and use scalemcsv, please do the following
+steps:
 
 1. Clone this git-repository to a local folder with::
 
@@ -107,26 +109,27 @@ applied to the energy dataset.
 
 It gives the following logs output to the run console::
 
-  15:05:37.423 [main] INFO scalemcsv - finished 1 / 18:  [2 hits] for CheckIsInt on ID
-  15:05:37.425 [main] INFO scalemcsv - finished 2 / 18:  [1 hits] for CheckNCharacters on technology
-  15:05:37.426 [main] INFO scalemcsv - finished 3 / 18:  [0 hits] for CheckNotNull on source
-  15:05:37.426 [main] INFO scalemcsv - finished 4 / 18:  [0 hits] for CheckNotNull on source_type
-  15:05:37.426 [main] INFO scalemcsv - finished 5 / 18:  [1 hits] for CheckPatternMatch on weblink
-  15:05:37.426 [main] INFO scalemcsv - finished 6 / 18:  [0 hits] for CheckIsInt on year
-  15:05:37.427 [main] INFO scalemcsv - finished 7 / 18:  [0 hits] for CheckPatternMatch on country
-  15:05:37.428 [main] INFO scalemcsv - finished 8 / 18:  [2 hits] for CheckFloat on capacity
-  15:05:37.428 [main] INFO scalemcsv - finished 9 / 18:  [2 hits] for CheckInRange on capacity
-  15:05:37.428 [main] INFO scalemcsv - finished 10 / 18:  [0 hits] for CheckPatternMatch on capacity_definition
-  15:05:37.428 [main] INFO scalemcsv - finished 11 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_0
-  15:05:37.428 [main] INFO scalemcsv - finished 12 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_1
-  15:05:37.428 [main] INFO scalemcsv - finished 13 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_2
-  15:05:37.429 [main] INFO scalemcsv - finished 14 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_3
-  15:05:37.429 [main] INFO scalemcsv - finished 15 / 18:  [0 hits] for CheckPatternMatch on technology_level
-  15:05:37.429 [main] INFO scalemcsv - finished 16 / 18:  [1 hits] for CheckPatternMatch on reporting_date
-  15:05:37.430 [main] INFO scalemcsv - finished 17 / 18:  [1 hits] for CheckDateNotInFuture on reporting_date
-  15:05:37.431 [main] INFO scalemcsv - finished 18 / 18:  [0 hits] for CheckNotNull on reporting_date
+  16:46:17.777 [main] INFO scalemcsv - finished 1 / 18:  [1 hits] for CheckIsInt on ID
+  16:46:17.780 [main] INFO scalemcsv - finished 2 / 18:  [1 hits] for CheckNCharacters on technology
+  16:46:17.780 [main] INFO scalemcsv - finished 3 / 18:  [0 hits] for CheckNotNull on source
+  16:46:17.780 [main] INFO scalemcsv - finished 4 / 18:  [0 hits] for CheckNotNull on source_type
+  16:46:17.780 [main] INFO scalemcsv - finished 5 / 18:  [1 hits] for CheckPatternMatch on weblink
+  16:46:17.781 [main] INFO scalemcsv - finished 6 / 18:  [1 hits] for CheckIsInt on year
+  16:46:17.781 [main] INFO scalemcsv - finished 7 / 18:  [0 hits] for CheckPatternMatch on country
+  16:46:17.782 [main] INFO scalemcsv - finished 8 / 18:  [1 hits] for CheckFloat on capacity
+  16:46:17.782 [main] INFO scalemcsv - finished 9 / 18:  [1 hits] for CheckInRange on capacity
+  16:46:17.782 [main] INFO scalemcsv - finished 10 / 18:  [0 hits] for CheckPatternMatch on capacity_definition
+  16:46:17.782 [main] INFO scalemcsv - finished 11 / 18:  [1 hits] for CheckPatternMatch on energy_source_level_0
+  16:46:17.782 [main] INFO scalemcsv - finished 12 / 18:  [4 hits] for CheckPatternMatch on energy_source_level_1
+  16:46:17.782 [main] INFO scalemcsv - finished 13 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_2
+  16:46:17.783 [main] INFO scalemcsv - finished 14 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_3
+  16:46:17.783 [main] INFO scalemcsv - finished 15 / 18:  [0 hits] for CheckPatternMatch on technology_level
+  16:46:17.783 [main] INFO scalemcsv - finished 16 / 18:  [1 hits] for CheckPatternMatch on reporting_date
+  16:46:17.784 [main] INFO scalemcsv - finished 17 / 18:  [2 hits] for CheckDateNotInFuture on reporting_date
+  16:46:17.784 [main] INFO scalemcsv - finished 18 / 18:  [0 hits] for CheckNotNull on reporting_date
   
   Process finished with exit code 0
+
 
 The output to the console shows how many hits were found for each
 validation that was defined in the ``EnergySuite`` validation suite.
@@ -144,10 +147,24 @@ the following code to the bottom of your main function::
   pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
   pw.close()
 
-The resulting json file can be opened and investigated. The result for
-the ``EnergySuite`` is included in the repository at ``!!!INCLUDE
-HERE!!!``
+The resulting json file can be opened and investigated. It includes
+all the hits and the found erronuous values. For example for the
+``CheckDateNotInFuture`` for the "reporting_date" column::
 
+   {
+    "total_errors": 2,
+    "found_indices": [
+      6,
+      8
+    ],
+    "used_validation": "CheckDateNotInFuture",
+    "found_values": [
+      "error",
+      "2030-07-08"
+    ],
+    "message": "Date value should be before today",
+    "column": "reporting_date"
+  }
 
 
 Creating your own validation suite
