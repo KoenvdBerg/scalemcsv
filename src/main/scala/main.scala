@@ -14,8 +14,10 @@
  * DONE: include header validations (filter for working specs in suiteSpecs)
  * DONE: remakce csv-validator energysuite
  * DONE: write in-code documentation and remove Yards
- * TODO: figure out how to make a SCALA library
+ * DONE: implement Future with 5 threats, then if 1 finish open new thread like docker pull
  * TODO: write README
+ * TODO: add to open repo on Github
+ * TODO: figure out how to make a SCALA library
  * TODO: write unit tests
  * DONE: add the rowcondition to the validation by adding depends parameter to validate
  *  - Do this by changing the logic to work with >2 inputs and the validate to loop over the index of the values and
@@ -36,7 +38,7 @@ import scalemcsv.suites.*
   logger.info("starting scalemcsv")
 
   // Reading in the CSV file
-  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_0.csv"
+  val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
   logger.info(s"reading input csv file: $infile")
     implicit object MyFormat extends DefaultCSVFormat:
       override val delimiter = '|'
@@ -50,8 +52,10 @@ import scalemcsv.suites.*
   val result = EnergySuite.apply(dat)
   logger.info("finished data validation")
 
+  import scala.concurrent.duration.*
+  import scala.concurrent.Await
+
   // Writing result to outfile
-//  val pw = new PrintWriter(new File("/tmp/scalemcsv_output.json"))
   val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
   pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
   pw.close()

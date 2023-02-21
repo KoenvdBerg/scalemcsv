@@ -1,7 +1,5 @@
 package scalemcsv.model
 
-import scala.concurrent.{ Future, ExecutionContext }
-import ExecutionContext.Implicits.global
 
 import scalemcsv.model.ValidationResult
 import scalemcsv.validator.*
@@ -32,7 +30,7 @@ trait SuiteModel:
   def suiteName: String
 
   /**
-   * Colletion of the specifications in this validation suite
+   * Collection of the specifications in this validation suite
    */
   def suiteSpecs: List[SuiteSpec]
 
@@ -53,27 +51,4 @@ trait SuiteModel:
 
 
 
-
-
-
-// YARD:
-// WITH FUTURE:
-//def apply(data: Map[String, Vector[String]]): List[Future[ValidationResult]] =
-//  this.suiteSpecs.map(spec =>
-//    Future {
-//      val relevantData = spec.depends.map(data(_))
-//      spec.validation.validate(
-//        values = relevantData,
-//        column = spec.column,
-//        rowCondition = relevantData.transpose.map(spec.rowCondition).toVector)
-//    })
-//    for {
-//      i <- this.suiteSpecs
-//    } yield
-//      val relevantData = i.depends.map(data(_))
-//      i.validation.validate(
-//        values = relevantData,
-//        column = i.column,
-//        rowCondition = relevantData.transpose.map(i.rowCondition)
-//    )
 
