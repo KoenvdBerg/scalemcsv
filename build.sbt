@@ -1,6 +1,6 @@
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "com.github.scalemcsv"
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "1.0.0-SNAPSHOT"
 name := "scalemcsv"
 crossPaths := false
 

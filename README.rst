@@ -42,7 +42,7 @@ steps:
 3. Add the following line to your ``build.sbt`` file to use scalemcsv
    in a new project::
 
-     libraryDependencies += "com.github.scalemcsv" % "scalemcsv" % "0.1.0-SNAPSHOT"
+     libraryDependencies += "com.github.scalemcsv" % "scalemcsv" % "1.0.0-SNAPSHOT"
 
    Make sure to reload IntelliJ sbt so that IntelliJ can load the library.
 
@@ -81,7 +81,7 @@ CSV data can be loaded in using the following code::
 
     // declaring the delimiter
     implicit object MyFormat extends DefaultCSVFormat:
-      override val delimiter = '|'
+      override val delimiter = ';'
     val reader = CSVReader.open(infile)
     val dat = scalemcsv.model.DataModel.dataMap(reader.allWithHeaders())
     reader.close()
@@ -270,6 +270,8 @@ that checks if the values in a column are exactly 10 characters long,
 but also accepts value "foobar". The template for a new validation is
 as follows::
 
+  import scalemcsv.model.ColumnValidation
+
   object CheckCharLengthEqualsTen extends ColumnValidation:
     override def logic(x: Vector[String]): Boolean = ???
     override def message: String = ???
@@ -278,6 +280,8 @@ as follows::
 We need to define the logic that computes the when the validation
 gives a hit, the message to display for each hit and the name of the
 validation. This can look as follows::
+
+  import scalemcsv.model.ColumnValidation
 
   class CheckCharLengthEqualsTen extends ColumnValidation:
     override def logic(x: Vector[String]): Boolean =
