@@ -1,5 +1,6 @@
 .idea/
 .bsp/
+out/
 project/.bloop
 project/project
 project/target

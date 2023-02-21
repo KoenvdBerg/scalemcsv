@@ -1,11 +1,16 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
-
 ThisBuild / scalaVersion := "3.2.2"
+ThisBuild / organization := "com.github.scalemcsv"
+ThisBuild / version := "0.1.0-SNAPSHOT"
+name := "scalemcsv"
+crossPaths := false
+
 
 lazy val root = (project in file("."))
   .settings(
-    name := "scalemcsv"
+    name := "scalemcsv",
   )
+
+
 
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.10"
 //libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4"

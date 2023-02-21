@@ -52,9 +52,6 @@ import scalemcsv.suites.*
   val result = EnergySuite.apply(dat)
   logger.info("finished data validation")
 
-  import scala.concurrent.duration.*
-  import scala.concurrent.Await
-
   // Writing result to outfile
   val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
   pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
