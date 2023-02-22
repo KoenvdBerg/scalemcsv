@@ -2,6 +2,8 @@ package scalemcsv.utils
 
 import scalemcsv.model.ValidationResult
 import com.typesafe.scalalogging.*
+import zio.*
+import java.io.*
 
 /** Logger used in scalemcsv */
 val logger = Logger("scalemcsv")
@@ -37,3 +39,24 @@ object utils:
           "found_indices" -> res.indicesFound,
           "found_values" -> res.valuesFound)
 
+  /**
+   * Writes a list of validation results to JSON in an outfile with ZIO
+   * @param result List of validation results
+   * @return Unit
+   */
+  def writeResult2OutfileWithZIO(result: List[ValidationResult]): Task[Unit] =
+    val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
+    pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
+    pw.close()
+    ZIO.succeed(())
+
+  /**
+   * Writes a list of validation results to JSON in an outfile
+   *
+   * @param result List of validation results
+   * @return Unit
+   */
+  def writeResult2Outfile(result: List[ValidationResult]): Unit =
+    val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
+    pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
+    pw.close()

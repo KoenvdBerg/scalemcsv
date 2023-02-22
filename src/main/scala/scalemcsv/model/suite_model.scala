@@ -1,5 +1,7 @@
 package scalemcsv.model
 
+import zio.*
+import zio.ZIOAspect.parallel
 
 import scalemcsv.model.ValidationResult
 import scalemcsv.validator.*
@@ -35,20 +37,29 @@ trait SuiteModel:
   def suiteSpecs: List[SuiteSpec]
 
   /**
+   * Applies the validation as defined in the SuiteSpec to the data using ZIO
+   * @param data The loaded in CSV data
+   * @return A collection of the validation results
+   */
+  def applyWithZIO(data: Map[String, Vector[String]], nFibers: Int): Task[List[ValidationResult]] =
+    for {
+      result <- ZIO.foreachPar(this.suiteSpecs) {
+        spec =>
+          spec.validation.validateWithZIO(
+            data = data,
+            spec = spec)
+      } @@ parallel(nFibers)
+    } yield (result)
+
+  /**
    * Applies the validation as defined in the SuiteSpec to the data
+   *
    * @param data The loaded in CSV data
    * @return A collection of the validation results
    */
   def apply(data: Map[String, Vector[String]]): List[ValidationResult] =
-    val nValidations = this.suiteSpecs.length
-    this.suiteSpecs.zipWithIndex.map((spec, index) =>
-      val appliedValidation = spec.validation.validate(
+    this.suiteSpecs.map(spec =>
+      spec.validation.validate(
         data = data,
         spec = spec)
-      logger.info(s"finished ${index + 1} / ${nValidations}:  [${appliedValidation.totalFound} hits] for ${spec.validation.validationName} on ${appliedValidation.column}")
-      appliedValidation
     )
-
-
-
-

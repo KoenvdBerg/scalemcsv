@@ -1,5 +1,8 @@
 package scalemcsv.model
 
+import zio.*
+import scalemcsv.utils.logger
+
 /**
  * Defines the result of a validation
  * @param indicesFound The indices of the hits where the validation didn't pass
@@ -47,19 +50,24 @@ trait ColumnValidation:
    * @param spec Instance of a SuiteSpec
    * @return A filled ValidationResult
    */
+  def validateWithZIO(data: Map[String, Vector[String]], spec: SuiteSpec): Task[ValidationResult] =
+    ZIO.succeed(this.validate(data, spec))
+
   def validate(data: Map[String, Vector[String]], spec: SuiteSpec): ValidationResult =
     try
-      val relevantData = spec.depends.map(data(_)).transpose  // this can cause the error for the catch below
+      val relevantData = spec.depends.map(data(_)).transpose // this can cause the error for the catch below
       val appliedRowCondition = relevantData.map(spec.rowCondition)
       val appliedLogic = relevantData.map(v => this.logic(v))
       val appliedTotal = Vector(appliedRowCondition, appliedLogic).transpose.map(a =>
         (a(0), a(1)) match
           case (true, true) => true
           case (true, false) => false
-          case (false, _) => true)  // if rowcondition not met, then always true
+          case (false, _) => true) // if rowcondition not met, then always true
       val foundIndices: Vector[Int] = appliedTotal.zipWithIndex.filter(_(0) == false).map(_(1))
       val foundValues = foundIndices.map(i => data(spec.column)(i))
-      ValidationResult(foundIndices, foundValues, foundIndices.length, this.message, spec.column, this.validationName)
+      val result = ValidationResult(foundIndices, foundValues, foundIndices.length, this.message, spec.column, this.validationName)
+      logger.info(s"found [${result.totalFound} hits] for ${spec.validation.validationName} on ${result.column}")
+      result
     catch
       case nsee: NoSuchElementException =>
         ValidationResult(
