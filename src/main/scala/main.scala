@@ -1,12 +1,9 @@
-import scala.util.matching.Regex
 import com.github.tototoshi.csv.*
 import zio.*
 import zio.Console.*
 
-import scalemcsv.utils.utils.*
+import scalemcsv.*
 import scalemcsv.utils.logger
-import scalemcsv.model.DataModel
-import scalemcsv.suites.*
 
 /** Example run with ZIO */
 object RunApp extends ZIOAppDefault {
@@ -17,14 +14,14 @@ object RunApp extends ZIOAppDefault {
   implicit object MyFormat extends DefaultCSVFormat:
     override val delimiter = '|'
   val reader = CSVReader.open(infile)
-  val dat = DataModel.dataMap(reader.allWithHeaders())
+  val dat = scalemcsv.model.DataModel.dataMap(reader.allWithHeaders())
   reader.close()
   logger.info("done reading csv file")
 
   def run =
     for {
-    result <- EnergySuite.applyWithZIO(dat, nFibers = 10)
-      _ <- writeResult2OutfileWithZIO(result)
+    result <- scalemcsv.suites.EnergySuite.applyWithZIO(dat, nFibers = 10)
+        _ <- scalemcsv.utils.utils.writeResult2OutfileWithZIO(result, outfile = "/home/koenvandenberg/Downloads/scalemcsv_output.json")
     } yield ()
 }
 
@@ -37,11 +34,11 @@ object RunApp extends ZIOAppDefault {
   implicit object MyFormat extends DefaultCSVFormat:
     override val delimiter = '|'
   val reader = CSVReader.open(infile)
-  val dat = DataModel.dataMap(reader.allWithHeaders())
+  val dat = scalemcsv.model.DataModel.dataMap(reader.allWithHeaders())
   reader.close()
   logger.info("done reading csv file")
 
-  val result = EnergySuite.apply(dat)
-  writeResult2Outfile(result)
+  val result = scalemcsv.suites.EnergySuite.apply(dat)
+  scalemcsv.utils.utils.writeResult2Outfile(result, outfile = "/home/koenvandenberg/Downloads/scalemcsv_output.json")
 
 

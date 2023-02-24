@@ -54,98 +54,77 @@ steps:
 Get started
 -----------
 
-Validating a CSV file with scalemcsv consists of the following three
-steps that will be explained further below:
+Validating a CSV file with scalemcsv requires that you first load in
+the CSV data, and then perform the validations using a validation
+suite. Below an example is provides using the ``energy_sample.csv``
+data that is present in this code-repository.
 
-1. Loading in the CSV data using a CSV loading library.
-2. Performing the validations using a predefined validation suite
-3. Investigating the results
+Data validation can be either part of a normal workflow or part of a
+ZIO workflow:
 
-Let's go through each step with accompanying code examples. We'll be
-using the ``energy_sample.csv`` data that is present in this
-code-repository.
+Normal workflow
+~~~~~~~~~~~
 
-**1. Loading in the CSV data using a CSV loading library**
+Use the following code to run the validations defined in a validation
+suite, which in this case is the ``EnergySuite`` that serves as
+example::
 
-The library that we'll be using to load in the CSV can be found here:
-https://github.com/tototoshi/scala-csv.
-
-CSV data can be loaded in using the following code::
-
-  import scalemcsv.*
   import com.github.tototoshi.csv.*
+  import scalemcsv.*
 
-  @main def main(): Unit =
+  @main def run(): Unit =
+
     // Reading in the CSV file
     val infile: String = "/path/to/energy_sample.csv"
-
-    // declaring the delimiter
     implicit object MyFormat extends DefaultCSVFormat:
       override val delimiter = ';'
     val reader = CSVReader.open(infile)
     val dat = scalemcsv.model.DataModel.dataMap(reader.allWithHeaders())
     reader.close()
-
-We use the ``scalemcsv.model.DataModel`` object and the ``dataMap``
-method to read in the csv as: ``Map[String, Vector[String]]``. This
-data object looks like follows (example)::
-
-  val dat = Map(
-    "column1" -> Vector("value1", "value2", "valueN")
-    "column2" -> Vector("value1", "value2", "valueN")
-    "columnN" -> Vector("value1", "value2", "valueN")
-  )
-
-**2. Performing the validations using a predefined validation suite**
-
-To perform data-validations, include the following code in the main
-function that was defined in the previous step::
-
-  val result = scalemcsv.suites.EnergySuite.apply(dat)
-
-This validates the data using the EnergySuite, that was included in
-the scalemcsv repository as an example and has 18 validations that are
-applied to the energy dataset.
-
-It gives the following logs output to the run console::
-
-  16:46:17.777 [main] INFO scalemcsv - finished 1 / 18:  [1 hits] for CheckIsInt on ID
-  16:46:17.780 [main] INFO scalemcsv - finished 2 / 18:  [1 hits] for CheckNCharacters on technology
-  16:46:17.780 [main] INFO scalemcsv - finished 3 / 18:  [0 hits] for CheckNotNull on source
-  16:46:17.780 [main] INFO scalemcsv - finished 4 / 18:  [0 hits] for CheckNotNull on source_type
-  16:46:17.780 [main] INFO scalemcsv - finished 5 / 18:  [1 hits] for CheckPatternMatch on weblink
-  16:46:17.781 [main] INFO scalemcsv - finished 6 / 18:  [1 hits] for CheckIsInt on year
-  16:46:17.781 [main] INFO scalemcsv - finished 7 / 18:  [0 hits] for CheckPatternMatch on country
-  16:46:17.782 [main] INFO scalemcsv - finished 8 / 18:  [1 hits] for CheckFloat on capacity
-  16:46:17.782 [main] INFO scalemcsv - finished 9 / 18:  [1 hits] for CheckInRange on capacity
-  16:46:17.782 [main] INFO scalemcsv - finished 10 / 18:  [0 hits] for CheckPatternMatch on capacity_definition
-  16:46:17.782 [main] INFO scalemcsv - finished 11 / 18:  [1 hits] for CheckPatternMatch on energy_source_level_0
-  16:46:17.782 [main] INFO scalemcsv - finished 12 / 18:  [4 hits] for CheckPatternMatch on energy_source_level_1
-  16:46:17.782 [main] INFO scalemcsv - finished 13 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_2
-  16:46:17.783 [main] INFO scalemcsv - finished 14 / 18:  [0 hits] for CheckPatternMatch on energy_source_level_3
-  16:46:17.783 [main] INFO scalemcsv - finished 15 / 18:  [0 hits] for CheckPatternMatch on technology_level
-  16:46:17.783 [main] INFO scalemcsv - finished 16 / 18:  [1 hits] for CheckPatternMatch on reporting_date
-  16:46:17.784 [main] INFO scalemcsv - finished 17 / 18:  [2 hits] for CheckDateNotInFuture on reporting_date
-  16:46:17.784 [main] INFO scalemcsv - finished 18 / 18:  [0 hits] for CheckNotNull on reporting_date
   
-  Process finished with exit code 0
+    val result = scalemcsv.suites.EnergySuite.apply(dat)
+    scalemcsv.utils.utils.writeResult2Outfile(result, outfile = "/path/to/scalemcsv_output.json")
 
 
-The output to the console shows how many hits were found for each
-validation that was defined in the ``EnergySuite`` validation suite.
+Run the main function and inspect the output at
+``/path/to/scalemcsv_output.json``.
+
+ZIO workflow
+~~~~~~~~~~~
+
+Use the following code to run the validations defined in a validation
+suite, which in this case is the ``EnergySuite`` that serves as
+example::
+
+  import com.github.tototoshi.csv.*
+  import zio.*
+  import zio.Console.*
+  import scalemcsv.*
+
+  object RunApp extends ZIOAppDefault {
+  
+    // Reading in the CSV file
+    val infile: String = "/path/to/energy_sample.csv"
+    implicit object MyFormat extends DefaultCSVFormat:
+      override val delimiter = ';'
+    val reader = CSVReader.open(infile)
+    val dat = scalemcsv.model.DataModel.dataMap(reader.allWithHeaders())
+    reader.close()
+  
+    def run =
+      for {
+      result <- scalemcsv.suites.EnergySuite.applyWithZIO(dat, nFibers = 10)
+          _ <- scalemcsv.utils.utils.writeResult2OutfileWithZIO(result, outfile = "/path/to/scalemcsv_output.json")
+      } yield ()
+  }
 
 
-**3. Investigating the results**
+Run the main function and inspect the output at
+``/path/to/scalemcsv_output.json``.
 
-To investigate the results, let's write the result to JSON first. Add
-the following code to the bottom of your main function::
-
-  import scalemcsv.utils.utils.{ValidationResult2Map, toJson}
-  import java.io.{File, PrintWriter}
-
-  val pw = new PrintWriter(new File("/path/to/outfolder/scalemcsv_output.json"))
-  pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
-  pw.close()
+  
+Investigating the results
+~~~~~~~~~~~
 
 The resulting json file can be opened and investigated. It includes
 all the hits and the found erronuous values. For example for the
@@ -331,3 +310,8 @@ Feel free to create a pull-request on this code-base. If you'd like,
 we can connect on Discord as well. Add my via my user-name: Koen#4776
 
 Contact: k.vandenberg@insertdata.nl
+
+
+.. scala-csv: https://github.com/tototoshi/scala-csv.
+
+

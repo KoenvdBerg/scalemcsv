@@ -44,10 +44,8 @@ object utils:
    * @param result List of validation results
    * @return Unit
    */
-  def writeResult2OutfileWithZIO(result: List[ValidationResult]): Task[Unit] =
-    val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
-    pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
-    pw.close()
+  def writeResult2OutfileWithZIO(result: List[ValidationResult], outfile: String): Task[Unit] =
+    writeResult2Outfile(result, outfile)
     ZIO.succeed(())
 
   /**
@@ -56,7 +54,7 @@ object utils:
    * @param result List of validation results
    * @return Unit
    */
-  def writeResult2Outfile(result: List[ValidationResult]): Unit =
-    val pw = new PrintWriter(new File("/home/koenvandenberg/Downloads/scalemcsv_output.json"))
+  def writeResult2Outfile(result: List[ValidationResult], outfile: String): Unit =
+    val pw = new PrintWriter(new File(outfile))
     pw.write(toJson(ValidationResult2Map(result)).replace("\\", "\\\\"))
     pw.close()
