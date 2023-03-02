@@ -26,7 +26,7 @@ object RunApp extends ZIOAppDefault {
 }
 
 /** Example normal run */
-@main def run(): Unit =
+def RunNormal(): Unit =
 
   // Reading in the CSV file
   val infile: String = "/home/koenvandenberg/insertdata/lisp/energy/benchmark/energy_data_4.csv"
