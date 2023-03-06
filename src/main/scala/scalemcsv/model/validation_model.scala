@@ -54,7 +54,7 @@ trait ColumnValidation:
     ZIO.succeed(this.validate(data, spec))
 
   def validate(data: Map[String, Vector[String]], spec: SuiteSpec): ValidationResult =
-    try
+    try {
       val relevantData = spec.depends.map(data(_)).transpose // this can cause the error for the catch below
       val appliedRowCondition = relevantData.map(spec.rowCondition)
       val appliedLogic = relevantData.map(v => this.logic(v))
@@ -65,13 +65,15 @@ trait ColumnValidation:
           case (false, _) => true) // if rowcondition not met, then always true
       val foundIndices: Vector[Int] = appliedTotal.zipWithIndex.filter(_(0) == false).map(_(1))
       val foundValues = foundIndices.map(i => data(spec.column)(i))
-      val result = ValidationResult(foundIndices, foundValues, foundIndices.length, this.message, spec.column, this.validationName)
+      val result = ValidationResult(foundIndices, foundValues, foundIndices.size, this.message, spec.column, this.validationName)
       logger.info(s"found [${result.totalFound} hits] for ${spec.validation.validationName} on ${result.column}")
       result
-    catch
+    } catch {
       case nsee: NoSuchElementException =>
+        logger.info(s"found [1 hits] for CheckHeaderPresent on ${spec.column}")
         ValidationResult(
           Vector(0),
           spec.depends, 1,
-          s"the headers defined in the depends cannot be found in the csv data, which causes the following validation to not be executed: $spec",
+          s"the header: ${spec.column} is missing from the data",
           spec.column, "CheckHeaderPresent")
+    }

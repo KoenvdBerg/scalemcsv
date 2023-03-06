@@ -5,5 +5,6 @@ project/.bloop
 project/project
 project/target
 src/main/scala/scalemcsv/futures/
+src/main/scala/scalemcsv/purfaction/
 target
 todo.org

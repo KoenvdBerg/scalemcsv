@@ -17,3 +17,6 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 libraryDependencies +="org.scalatest" %% "scalatest" % "3.2.9" % Test
 libraryDependencies += "dev.zio" %% "zio" % "2.0.8"
+libraryDependencies += "com.lihaoyi" %% "mainargs" % "0.4.0"
+libraryDependencies += "org.apache.poi" % "poi" % "3.17"
+libraryDependencies += "org.apache.poi" % "poi-ooxml" % "3.17"

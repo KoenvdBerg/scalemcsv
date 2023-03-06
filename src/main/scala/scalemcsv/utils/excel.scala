@@ -51,7 +51,7 @@ object XlsxWriter:
     val output = new FileOutputStream(outfile)
     val sheet = workbook.createSheet()
 
-    val vectorData = data.flatMap(res => res.indicesFound.map(i =>
+    val vectorData = data.flatMap(res => res.indicesFound.indices.map(i =>
       Vector(res.column, res.totalFound, res.indicesFound(i), res.valuesFound(i), res.displayMessage, res.usedValidation)))
 
     // Write header:
